@@ -11,3 +11,8 @@ And an output resolution in DPI (default is 72 DPI):
 ```
 ./shrinkpdf.sh in.pdf out.pdf 90
 ```
+
+Also enable color to grayscale conversion:
+```
+./shrinkpdf.sh -g in.pdf out.pdf 90
+```
