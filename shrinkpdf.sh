@@ -32,6 +32,13 @@
 
 shrink ()
 {
+	gray_params=""
+	if [ "$grayscale" = "YES" ]
+	then
+		gray_params="-sProcessColorModel=DeviceGray \
+                             -sColorConversionStrategy=Gray \
+                             -dOverrideICC "
+	fi
 	gs					\
 	  -q -dNOPAUSE -dBATCH -dSAFER		\
 	  -sDEVICE=pdfwrite			\
@@ -47,6 +54,7 @@ shrink ()
 	  -dMonoImageDownsampleType=/Bicubic	\
 	  -dMonoImageResolution=$3		\
 	  -sOutputFile="$2"			\
+	  ${gray_params} \
 	  "$1"
 }
 
@@ -69,8 +77,28 @@ usage ()
 {
 	echo "Reduces PDF filesize by lossy recompressing with Ghostscript."
 	echo "Not guaranteed to succeed, but usually works."
-	echo "  Usage: $1 infile [outfile] [resolution_in_dpi]"
+	echo "  Usage: $1 [-g] infile [outfile] [resolution_in_dpi]"
+	echo
+	echo "          -g enable color->grayscale conversion which usually"
+	echo "             reduces output slightly more."
 }
+
+while getopts ':hg' flag; do
+  case $flag in
+    h)
+      usage "$0"
+      exit 0
+      ;;
+    g)
+      grayscale="YES"
+      ;;
+    \?)
+      echo "invalid option (use -h for help)"
+      exit 1
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
 
 IFILE="$1"
 
